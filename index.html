@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Porady Mechanika</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+    // Pobiera codzienną poradę z porady.txt
+    async function pokazPorade() {
+        const res = await fetch('porady.txt');
+        const text = await res.text();
+        const porady = text.split('\n').filter(l => l.trim().length > 0);
+        // Codzienna porada wg daty
+        const dzis = new Date();
+        const idx = dzis.getFullYear() * 366 + dzis.getMonth() * 31 + dzis.getDate();
+        const porada = porady[idx % porady.length];
+        document.getElementById('porada-ai').innerText = porada || 'Brak porady na dziś.';
+    }
+    window.onload = pokazPorade;
+    </script>
+    <style>
+        body { font-family: Arial; background: #f8f8f8; }
+        main { max-width: 700px; margin: 30px auto; background: #fff; padding: 22px; border-radius: 8px; }
+        .ai-box { background: #e7f5ff; color: #34527a; padding: 16px; border-radius: 6px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Porady Mechanika dla Kierowców</h1>
+    </header>
+    <main>
+        <div class="ai-box">
+            <h2>Codzienna porada AI:</h2>
+            <div id="porada-ai">Wczytywanie...</div>
+        </div>
+        <h2>Porady ogólne:</h2>
+        <ul>
+            <li>Sprawdzaj poziom oleju i płynów eksploatacyjnych.</li>
+            <li>Dbaj o regularność wymian filtrów.</li>
+            <li>Nie zwlekaj z wymianą rozrządu.</li>
+        </ul>
+    </main>
+    <footer>
+        &copy; 2025 Porady Mechanika | Twórca: tabulek
+    </footer>
+</body>
+</html>
