@@ -5,8 +5,11 @@
     <title>Porady Mechanika</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-    // Pobiera ostatnią poradę z porady.txt
-    async function pokazPorade() {
+    let serwerDate = null;
+    let timerInterval = null;
+
+    // Pobieranie porady z pliku
+    async function aktualizujPorade() {
         const res = await fetch('porady.txt');
         const text = await res.text();
         const porady = text.split('\n').filter(l => l.trim().length > 0);
@@ -14,11 +17,6 @@
         document.getElementById('porada-ai').innerText = porada;
     }
 
-    let serwerDate = null;
-    let timerInterval = null;
-    let correctionInterval = null;
-
-    // Wyświetlanie zegara na podstawie daty
     function aktualizujZegar() {
         if (!serwerDate) return;
         serwerDate.setSeconds(serwerDate.getSeconds() + 1);
@@ -26,9 +24,18 @@
         const minuta = serwerDate.getUTCMinutes().toString().padStart(2, '0');
         const sekunda = serwerDate.getUTCSeconds().toString().padStart(2, '0');
         document.getElementById('serwer-godzina').innerText = `Godzina serwera: ${godzina}:${minuta}:${sekunda} UTC`;
+
+        // Generowanie porady o 10:00:00 i 14:00:00 UTC
+        if ((godzina === "10" || godzina === "14") && minuta === "00" && sekunda === "00") {
+            aktualizujPorade();
+        }
+
+        // Synchronizacja zegara z serwerem o 10:00:00 i 14:00:00 UTC
+        if ((godzina === "10" || godzina === "14") && minuta === "00" && sekunda === "00") {
+            pobierzCzasSerwera();
+        }
     }
 
-    // Pobiera czas serwera z nagłówka Date
     async function pobierzCzasSerwera() {
         try {
             const res = await fetch('porady.txt', { method: 'HEAD' });
@@ -36,13 +43,8 @@
             if (dateHeader) {
                 serwerDate = new Date(dateHeader);
                 aktualizujZegar(); // od razu wyświetl
-                // Jeżeli timer nie działa, uruchom go
                 if (!timerInterval) {
                     timerInterval = setInterval(aktualizujZegar, 1000); // odświeżanie co sekundę
-                }
-                // Co minutę skoryguj czas z serwera
-                if (!correctionInterval) {
-                    correctionInterval = setInterval(pobierzCzasSerwera, 60000);
                 }
             } else {
                 document.getElementById('serwer-godzina').innerText = 'Nie można pobrać godziny serwera.';
@@ -53,8 +55,8 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        pokazPorade();
         pobierzCzasSerwera();
+        aktualizujPorade();
     });
     </script>
     <style>
