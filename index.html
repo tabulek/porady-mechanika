@@ -13,7 +13,6 @@
         const porada = porady.length > 0 ? porady[porady.length - 1] : 'Brak porady!';
         document.getElementById('porada-ai').innerText = porada;
     }
-    window.onload = pokazPorade;
 
     // Pobiera godzinę serwera z nagłówka Date
     async function pokazGodzineSerwera() {
@@ -33,12 +32,13 @@
             document.getElementById('serwer-godzina').innerText = 'Błąd pobierania godziny serwera.';
         }
     }
-    // Aktualizuj godzinę serwera co 10 sekund
-    setInterval(pokazGodzineSerwera, 10000);
-    window.onload = function() {
+
+    // Poprawne wywołanie obu funkcji przy starcie
+    window.addEventListener('DOMContentLoaded', () => {
         pokazPorade();
         pokazGodzineSerwera();
-    };
+        setInterval(pokazGodzineSerwera, 10000); // odświeżanie co 10 sekund
+    });
     </script>
     <style>
         body { font-family: Arial; background: #f8f8f8; }
