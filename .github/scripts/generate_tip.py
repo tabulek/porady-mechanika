@@ -1,13 +1,13 @@
-import os
 import openai
+import os
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-response = openai.ChatCompletion.create(
+response = openai.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "Jesteś pomocnym AI mechanikiem samochodowym."},
-        {"role": "user", "content": "Podaj jedną praktyczną poradę dotyczącą samochodu."}
+        {"role": "system", "content": "Jesteś doświadczonym mechanikiem samochodowym. Generuj krótką poradę dla kierowców dotyczącą codziennej eksploatacji samochodu."},
+        {"role": "user", "content": "Podaj poradę dla kierowcy na dziś."}
     ],
     max_tokens=100
 )
