@@ -14,17 +14,36 @@
         document.getElementById('porada-ai').innerText = porada;
     }
 
-    // Pobiera godzinę serwera z nagłówka Date
-    async function pokazGodzineSerwera() {
+    let serwerDate = null;
+    let timerInterval = null;
+    let correctionInterval = null;
+
+    // Wyświetlanie zegara na podstawie daty
+    function aktualizujZegar() {
+        if (!serwerDate) return;
+        serwerDate.setSeconds(serwerDate.getSeconds() + 1);
+        const godzina = serwerDate.getUTCHours().toString().padStart(2, '0');
+        const minuta = serwerDate.getUTCMinutes().toString().padStart(2, '0');
+        const sekunda = serwerDate.getUTCSeconds().toString().padStart(2, '0');
+        document.getElementById('serwer-godzina').innerText = `Godzina serwera: ${godzina}:${minuta}:${sekunda} UTC`;
+    }
+
+    // Pobiera czas serwera z nagłówka Date
+    async function pobierzCzasSerwera() {
         try {
             const res = await fetch('porady.txt', { method: 'HEAD' });
             const dateHeader = res.headers.get('Date');
             if (dateHeader) {
-                const serwerDate = new Date(dateHeader);
-                const godzina = serwerDate.getUTCHours().toString().padStart(2, '0');
-                const minuta = serwerDate.getUTCMinutes().toString().padStart(2, '0');
-                const sekunda = serwerDate.getUTCSeconds().toString().padStart(2, '0');
-                document.getElementById('serwer-godzina').innerText = `Godzina serwera: ${godzina}:${minuta}:${sekunda} UTC`;
+                serwerDate = new Date(dateHeader);
+                aktualizujZegar(); // od razu wyświetl
+                // Jeżeli timer nie działa, uruchom go
+                if (!timerInterval) {
+                    timerInterval = setInterval(aktualizujZegar, 1000); // odświeżanie co sekundę
+                }
+                // Co minutę skoryguj czas z serwera
+                if (!correctionInterval) {
+                    correctionInterval = setInterval(pobierzCzasSerwera, 60000);
+                }
             } else {
                 document.getElementById('serwer-godzina').innerText = 'Nie można pobrać godziny serwera.';
             }
@@ -33,11 +52,9 @@
         }
     }
 
-    // Poprawne wywołanie obu funkcji przy starcie
     window.addEventListener('DOMContentLoaded', () => {
         pokazPorade();
-        pokazGodzineSerwera();
-        setInterval(pokazGodzineSerwera, 10000); // odświeżanie co 10 sekund
+        pobierzCzasSerwera();
     });
     </script>
     <style>
