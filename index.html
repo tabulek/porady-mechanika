@@ -14,11 +14,48 @@
         document.getElementById('porada-ai').innerText = porada;
     }
     window.onload = pokazPorade;
+
+    // Pobiera godzinę serwera z nagłówka Date
+    async function pokazGodzineSerwera() {
+        try {
+            const res = await fetch('porady.txt', { method: 'HEAD' });
+            const dateHeader = res.headers.get('Date');
+            if (dateHeader) {
+                const serwerDate = new Date(dateHeader);
+                const godzina = serwerDate.getUTCHours().toString().padStart(2, '0');
+                const minuta = serwerDate.getUTCMinutes().toString().padStart(2, '0');
+                const sekunda = serwerDate.getUTCSeconds().toString().padStart(2, '0');
+                document.getElementById('serwer-godzina').innerText = `Godzina serwera: ${godzina}:${minuta}:${sekunda} UTC`;
+            } else {
+                document.getElementById('serwer-godzina').innerText = 'Nie można pobrać godziny serwera.';
+            }
+        } catch {
+            document.getElementById('serwer-godzina').innerText = 'Błąd pobierania godziny serwera.';
+        }
+    }
+    // Aktualizuj godzinę serwera co 10 sekund
+    setInterval(pokazGodzineSerwera, 10000);
+    window.onload = function() {
+        pokazPorade();
+        pokazGodzineSerwera();
+    };
     </script>
     <style>
         body { font-family: Arial; background: #f8f8f8; }
         main { max-width: 700px; margin: 30px auto; background: #fff; padding: 22px; border-radius: 8px; }
         .ai-box { background: #e7f5ff; color: #34527a; padding: 16px; border-radius: 6px; margin-bottom: 20px; }
+        #serwer-godzina {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            background: #e7f5ff;
+            color: #34527a;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(52,82,122,0.09);
+            z-index: 99;
+        }
     </style>
 </head>
 <body>
@@ -40,5 +77,6 @@
     <footer>
         &copy; 2025 Porady Mechanika | Twórca: tabulek
     </footer>
+    <div id="serwer-godzina"></div>
 </body>
 </html>
