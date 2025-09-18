@@ -5,16 +5,13 @@
     <title>Porady Mechanika</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-    // Pobiera codzienną poradę z porady.txt
+    // Pobiera ostatnią poradę z porady.txt
     async function pokazPorade() {
         const res = await fetch('porady.txt');
         const text = await res.text();
         const porady = text.split('\n').filter(l => l.trim().length > 0);
-        // Codzienna porada wg daty
-        const dzis = new Date();
-        const idx = dzis.getFullYear() * 366 + dzis.getMonth() * 31 + dzis.getDate();
-        const porada = porady[idx % porady.length];
-        document.getElementById('porada-ai').innerText = porada || 'Brak porady na dziś.';
+        const porada = porady.length > 0 ? porady[porady.length - 1] : 'Brak porady!';
+        document.getElementById('porada-ai').innerText = porada;
     }
     window.onload = pokazPorade;
     </script>
