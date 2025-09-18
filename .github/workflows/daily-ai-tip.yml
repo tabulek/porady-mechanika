@@ -2,7 +2,7 @@ name: Daily AI car tip
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # codziennie o 10:00 UTC
+    - cron: '0 10 * * *'  # codziennie o 10:00 UTC
     - cron: '0 14 * * *'  # codziennie o 14:00 UTC
 
 jobs:
