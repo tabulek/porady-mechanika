@@ -42,7 +42,7 @@ bool isCEST(uint16_t year, uint8_t month, uint8_t day) {
   return day < octoberSunday;
 }
 
-String formatTime(const TinyGPSTime &time, const TinyGPSDate &date) {
+String formatTime(TinyGPSTime &time, TinyGPSDate &date) {
   if (!time.isValid() || !date.isValid()) return "--:--:--";
 
   int hour = time.hour();
