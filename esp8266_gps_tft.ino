@@ -42,14 +42,14 @@ bool isCEST(uint16_t year, uint8_t month, uint8_t day) {
   return day < octoberSunday;
 }
 
-String formatTime(TinyGPSTime &time, TinyGPSDate &date) {
-  if (!time.isValid() || !date.isValid()) return "--:--:--";
+String formatTime(TinyGPSPlus &gps) {
+  if (!gps.time.isValid() || !gps.date.isValid()) return "--:--:--";
 
-  int hour = time.hour();
-  int minute = time.minute();
-  int second = time.second();
+  int hour = gps.time.hour();
+  int minute = gps.time.minute();
+  int second = gps.time.second();
 
-  int tzOffset = isCEST(date.year(), date.month(), date.day()) ? 2 : 1;
+  int tzOffset = isCEST(gps.date.year(), gps.date.month(), gps.date.day()) ? 2 : 1;
   hour = (hour + tzOffset) % 24;
 
   char buffer[9];
@@ -74,7 +74,7 @@ void updateDisplay() {
   // Time (Warsaw)
   tft.setCursor(0, 30);
   tft.print("Czas: ");
-  tft.println(formatTime(gps.time, gps.date));
+  tft.println(formatTime(gps));
 
   // Speed in km/h without trailing decimals
   tft.setCursor(0, 60);
